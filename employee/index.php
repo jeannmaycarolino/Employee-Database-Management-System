@@ -14,7 +14,7 @@
     <title>Employee Database Management</title>
 </head>
 <body class="bg-stone-50">
-<?php include('config/db.php'); ?>
+<?php include('../config/db.php'); ?>
 
 <header class="shadow-lg">
     <div class="flex items-center w-full px-6 py-2 justify-between">
@@ -26,7 +26,6 @@
                 <ul id="navigation" class="flex flex-row gap-6 px-8 text-gray-400 font-medium max-sm:hidden max-sm:flex-col max-sm:px-4 max-sm:absolute max-sm:top-14 max-sm:bg-slate-800 max-sm:w-full max-sm:left-0 max-sm:gap-1 max-sm:pb-3 max-sm:rounded-b-lg">
                     <a class="py-2 px-3 bg-yellow-400 rounded-md text-black" href="index.php"><li>Dashboard</li></a>
                     <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="employee.php"><li>Employee</li></a>
-                    <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="position.php"><li>Position</li></a>
                     <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="project.php"><li>Project</li></a>
                     <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="assignment.php"><li>Assignment</li></a>
                 </ul>
@@ -43,7 +42,7 @@
             </div>
         </div>
         <div>
-        <a href="login.php" class="font-medium py-2 px-3 rounded-md hover:bg-red-400 hover:text-black">Sign out </a>
+        <a href="../login.php" class="font-medium py-2 px-3 rounded-md hover:bg-red-400 hover:text-black">Sign out </a>
         </div>
     </div>
 </header>
@@ -142,11 +141,10 @@
             </div>
         </div>
 
-        
-        <div class="flex flex-col gap-3">
+        <div class="ml-20 flex flex-col gap-3">
             <h5 class="text-xl text-center font-bold leading-none text-gray-900 dark:text-white pe-1">Your team's progress</h5>
             <?php
-                include('config/db.php');
+                include('../config/db.php');
 
                 // Fetch all projects
                 $projectQuery = "SELECT * FROM project";
@@ -188,153 +186,134 @@
                 ];
             ?>
 
+
             <!-- Radial Chart -->
             <div class="py-6" id="radial-chart"></div>
-
-            <script type="text/javascript">
-                const chartData = <?php echo json_encode($chartData); ?>;
-                
-                const getChartOptions = () => {
-                const totalProjects = chartData.done + chartData.inProgress;
-
-                return {
-                    series: [chartData.done, chartData.inProgress],
-                    colors: ["#1C64F2", "#16BDCA"],
-                    chart: {
-                    height: "380px",
-                    width: "100%",
-                    type: "radialBar",
-                    sparkline: {
-                        enabled: true,
-                    },
-                    },
-                    plotOptions: {
-                    radialBar: {
-                        track: {
-                        background: '#E5E7EB',
-                        startAngle: -135,
-                        endAngle: 135,
-                        },
-                        dataLabels: {
-                        show: true,
-                        name: {
-                            offsetY: -10,
-                            show: true,
-                            color: '#888',
-                            fontSize: '17px'
-                        },
-                        value: {
-                            formatter: function(val) {
-                            return parseInt(val);
-                            },
-                            color: '#111',
-                            fontSize: '36px',
-                            show: true,
-                        }
-                        },
-                        hollow: {
-                        margin: 0,
-                        size: "32%",
-                        background: 'transparent',
-                        },
-                        track: {
-                        show: true,
-                        startAngle: undefined,
-                        endAngle: undefined,
-                        background: '#f2f2f2',
-                        strokeWidth: '97%',
-                        opacity: 1,
-                        margin: 5, // margin is in pixels
-                        dropShadow: {
-                            enabled: false,
-                            top: 2,
-                            left: 0,
-                            blur: 4,
-                            opacity: 0.15
-                        }
-                        }
-                    }
-                    },
-                    labels: ["Done", "In progress"],
-                    legend: {
-                    show: true,
-                    position: "bottom",
-                    fontFamily: "Inter, sans-serif",
-                    },
-                    tooltip: {
-                    enabled: true,
-                    x: {
-                        show: false,
-                    },
-                    y: {
-                        formatter: function(value) {
-                        return value + " projects";
-                        }
-                    }
-                    }
-                }
-                }
-
-                if (document.getElementById("radial-chart") && typeof ApexCharts !== 'undefined') {
-                const chart = new ApexCharts(document.querySelector("#radial-chart"), getChartOptions());
-                chart.render();
-                }
-            </script>
         </div>
     </div>
-    <div class="mb-10 mt-10 mr-10 flex flex-col gap-3 w-full">
-        <h5 class="text-xl text-center font-bold leading-none text-gray-900 dark:text-white pe-1">Position Salary</h5>
-        <canvas id="barChart" class="w-full" width="100" height="50"></canvas>
-    </div>
-</div>
-<script type="text/javascript">
-    <?php
-        include('config/db.php');
+    <script type="text/javascript">
+        const chartData = <?php echo json_encode($chartData); ?>;
+        
+        const getChartOptions = () => {
+        const totalProjects = chartData.done + chartData.inProgress;
 
-        // Fetch data from the database
-        $query = "SELECT PositionTitle, Salary FROM position";
-        $result = mysqli_query($conn, $query);
-
-        $data = array();
-        while ($row = mysqli_fetch_assoc($result)) {
-            $data[] = $row;
-        }
-
-        $Salary = json_encode($data);
-        echo "const Salary = $Salary;";
-    ?>
-
-    console.log("Hello");
-
-    // After PHP execution, this is plain JavaScript
-    const labels = Salary.map(item => item.PositionTitle);
-    const salaries = Salary.map(item => item.Salary);
-
-    const ctx = document.getElementById('barChart').getContext('2d');
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Salary',
-                data: salaries,
-                borderWidth: 1,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)'
-            }]
-        },
-        options: {
-   
-            scales: {
-                y: {
-                    beginAtZero: true
+        return {
+            series: [chartData.done, chartData.inProgress],
+            colors: ["#1C64F2", "#16BDCA"],
+            chart: {
+            height: "380px",
+            width: "100%",
+            type: "radialBar",
+            sparkline: {
+                enabled: true,
+            },
+            },
+            plotOptions: {
+            radialBar: {
+                track: {
+                background: '#E5E7EB',
+                startAngle: -135,
+                endAngle: 135,
+                },
+                dataLabels: {
+                show: true,
+                name: {
+                    offsetY: -10,
+                    show: true,
+                    color: '#888',
+                    fontSize: '17px'
+                },
+                value: {
+                    formatter: function(val) {
+                    return parseInt(val);
+                    },
+                    color: '#111',
+                    fontSize: '36px',
+                    show: true,
+                }
+                },
+                hollow: {
+                margin: 0,
+                size: "32%",
+                background: 'transparent',
+                },
+                track: {
+                show: true,
+                startAngle: undefined,
+                endAngle: undefined,
+                background: '#f2f2f2',
+                strokeWidth: '97%',
+                opacity: 1,
+                margin: 5, // margin is in pixels
+                dropShadow: {
+                    enabled: false,
+                    top: 2,
+                    left: 0,
+                    blur: 4,
+                    opacity: 0.15
+                }
                 }
             }
+            },
+            labels: ["Done", "In progress"],
+            legend: {
+            show: true,
+            position: "bottom",
+            fontFamily: "Inter, sans-serif",
+            },
+            tooltip: {
+            enabled: true,
+            x: {
+                show: false,
+            },
+            y: {
+                formatter: function(value) {
+                return value + " projects";
+                }
+            }
+            }
         }
-    });
-</script>
+        }
 
+        if (document.getElementById("radial-chart") && typeof ApexCharts !== 'undefined') {
+        const chart = new ApexCharts(document.querySelector("#radial-chart"), getChartOptions());
+        chart.render();
+        }
+    </script>
+    <table class="w-full mr-20 mt-3 ml-20 text-sm text-left rtl:text-right text-lightgray">
+                    <thead class="text-xs text-primary_text uppercase bg-yellow-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Project Name</th>
+                            <th scope="col" class="px-6 py-3">Start Date</th>
+                            <th scope="col" class="px-6 py-3">End Date</th>
+                            <th scope="col" class="px-6 py-3">Status</th>
+                         
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            $limit = 7;
+                            $project = "SELECT * FROM project";
+                            $result = mysqli_query($conn, $project) or die('error');
+
+                            $total_rows = mysqli_num_rows($result);
+                            $total_pages = ceil($total_rows / $limit);
+                            if (!isset($_GET['page'])) {
+                                $page_number = 1;
+                            } else {
+                                $page_number = $_GET['page'];
+                            }
+                            $current_page = $page_number;
+                            $initial_page = ($page_number - 1) * $limit;
+                            $project = "SELECT * FROM project LIMIT $initial_page, $limit;";
+                           
+                            getTableData($project);
+                        ?>
+                    </tbody>
+                </table>
+    
+</div>
+ 
 <!-- Footer -->
 <footer class="w-full absolute bottom-0 bg-slate-700 text-center text-white py-4">
     &copy; 2024 Employee Database Management
@@ -342,3 +321,47 @@
 
 </body>
 </html>
+
+<?php
+function getTableData($project) {
+    global $conn;
+    $result = mysqli_query($conn, $project) or die('error');
+
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $startDate = new DateTime($row['StartDate']);
+            $formattedStartDate = $startDate->format('n/j/Y');
+            $endDate = new DateTime($row['EndDate']);
+            $formattedEndDate = $endDate->format('n/j/Y');
+            
+            $currentDate = new DateTime();
+            $startDate = $row['StartDate'];
+            $endDate = $row['EndDate'];
+                
+
+            // Convert StartDate and EndDate to DateTime objects
+            $startDateObject = DateTime::createFromFormat('m/d/Y', $startDate);
+            $endDateObject = DateTime::createFromFormat('m/d/Y', $endDate);
+
+            if ($endDateObject !== false && $endDateObject <= $currentDate) {
+                // If endDate is not empty and endDate is less than or equal to the current date
+                $text = "Done";
+                $class = "text-green-400";
+            } else { 
+                // If startDate is not empty, startDate is less than or equal to the current date, and endDate is greater than the current date or not set
+              $text = "In Progress";
+              $class = "text-red-500";
+
+            }
+            echo '<tr>';
+            echo '<td class="px-6 py-4">' . $row['ProjectName'] . '</td>';
+            echo '<td class="px-6 py-4">' . $formattedStartDate . '</td>';
+            echo '<td class="px-6 py-4">' . $formattedEndDate . '</td>';
+            echo '<td class="px-6 py-4 '.$class.'" >' . $text. '</td>';
+            echo '</tr>';
+        }
+    } else {
+        echo '<tr><td colspan="5" class="text-center py-4">No Records Found</td></tr>';
+    }
+}
+?>

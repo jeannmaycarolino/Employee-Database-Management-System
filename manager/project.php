@@ -14,7 +14,7 @@
     <title>Employee Database Management</title>
 </head>
 <body class="bg-stone-50">
-<?php include('config/db.php'); ?>
+<?php include('../config/db.php'); ?>
 
 <header class="shadow-lg">
     <div class="flex items-center w-full px-6 py-2 justify-between">
@@ -72,7 +72,7 @@
                 ?>
             </div>
 <?php
-include('config/db.php');
+include('../config/db.php');
 
 // Fetch all projects
 $projectQuery = "SELECT * FROM project";
@@ -219,7 +219,7 @@ $chartData = [
                             <th scope="col" class="px-6 py-3">Project Name</th>
                             <th scope="col" class="px-6 py-3">Start Date</th>
                             <th scope="col" class="px-6 py-3">End Date</th>
-                            <th scope="col" class="px-6 py-3">Action</th>
+                         
                         </tr>
                     </thead>
                     <tbody>
@@ -465,10 +465,6 @@ function getTableData($project) {
             echo '<td class="px-6 py-4">' . $row['ProjectName'] . '</td>';
             echo '<td class="px-6 py-4">' . $formattedStartDate . '</td>';
             echo '<td class="px-6 py-4">' . $formattedEndDate . '</td>';
-            echo '<td class="px-6 py-4 flex gap-2">';
-            echo '<button class="bg-green-400 hover:bg-green-500 text-black font-semibold py-1 px-2 rounded" onclick="openEditModal(\'' . $row['ProjectID'] . '\', \'' . $row['ProjectName'] . '\', \'' . $formattedStartDate .'\', \'' . $formattedEndDate .'\')">Edit</button>';
-            echo '<button class="bg-red-400 hover:bg-red-500 text-white font-semibold py-1 px-2 rounded" onclick="deleteProject(\'' . $row['ProjectID'] . '\')">Delete</button>';
-            echo '</td>';
             echo '</tr>';
         }
     } else {

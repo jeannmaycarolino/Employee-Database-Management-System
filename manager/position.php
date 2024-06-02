@@ -12,7 +12,7 @@
     <title>Employee Database Management</title>
 </head>
 <body class="bg-stone-50">
-<?php include('config/db.php'); ?>
+<?php include('../config/db.php'); ?>
 
 <header class="shadow-lg">
     <div class="flex items-center w-full px-6 py-2 justify-between">
@@ -40,8 +40,8 @@
                 </div>
             </div>
         </div>
-          <div>
-        <a href="login.php" class="font-medium py-2 px-3 rounded-md hover:bg-red-400 hover:text-black">Sign out </a>
+        <div>
+        <a href="../login.php" class="font-medium py-2 px-3 rounded-md hover:bg-red-400 hover:text-black">Sign out </a>
         </div>
     </div>
 </header>
@@ -80,7 +80,7 @@
                             <th scope="col" class="px-6 py-3">Position ID</th>
                             <th scope="col" class="px-6 py-3">Position Title</th>
                             <th scope="col" class="px-6 py-3">Salary</th>
-                            <th scope="col" class="px-6 py-3">Action</th>
+                          
                         </tr>
                     </thead>
                     <tbody>
@@ -299,10 +299,6 @@ function getTableData($position) {
             echo '<td class="px-6 py-4">' . $row['PositionID'] . '</td>';
             echo '<td class="px-6 py-4">' . $row['PositionTitle'] . '</td>';
             echo '<td class="px-6 py-4">' . $row['Salary'] . '</td>';
-            echo '<td class="px-6 py-4 flex gap-2">';
-            echo '<button class="bg-green-400 hover:bg-green-500 text-black font-semibold py-1 px-2 rounded" onclick="openEditModal(\'' . $row['PositionID'] . '\', \'' . $row['PositionTitle'] . '\', \'' . $row['Salary'] .'\')">Edit</button>';
-            echo '<button class="bg-red-400 hover:bg-red-500 text-white font-semibold py-1 px-2 rounded" onclick="deletePosition(\'' . $row['PositionID'] . '\')">Delete</button>';
-            echo '</td>';
             echo '</tr>';
         }
     } else {

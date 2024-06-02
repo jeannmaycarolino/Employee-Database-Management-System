@@ -12,7 +12,7 @@
     <title>Employee Database Management</title>
 </head>
 <body class="bg-stone-50">
-<?php include('config/db.php'); ?>
+<?php include('../config/db.php'); ?>
 
 <header class="shadow-lg">
     <div class="flex items-center w-full px-6 py-2 justify-between">
@@ -24,7 +24,6 @@
                 <ul id="navigation" class="flex flex-row gap-6 px-8 text-gray-400 font-medium max-sm:hidden max-sm:flex-col max-sm:px-4 max-sm:absolute max-sm:top-14 max-sm:bg-slate-800 max-sm:w-full max-sm:left-0 max-sm:gap-1 max-sm:pb-3 max-sm:rounded-b-lg">
                     <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="index.php"><li>Dashboard</li></a>
                     <a class="py-2 px-3 bg-yellow-400 rounded-md text-black" href="employee.php"><li>Employee</li></a>
-                    <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="position.php"><li>Position</li></a>
                     <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="project.php"><li>Project</li></a>
                     <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="assignment.php"><li>Assignment</li></a>
                 </ul>
@@ -41,7 +40,7 @@
             </div>
         </div>
         <div>
-        <a href="login.php" class="font-medium py-2 px-3 rounded-md hover:bg-red-400 hover:text-black">Sign out </a>
+        <a href="../login.php" class="font-medium py-2 px-3 rounded-md hover:bg-red-400 hover:text-black">Sign out </a>
         </div>
     </div>
 </header>
@@ -81,7 +80,6 @@
                             <th scope="col" class="px-6 py-3">First Name</th>
                             <th scope="col" class="px-6 py-3">Last Name</th>
                             <th scope="col" class="px-6 py-3">Position</th>
-                            <th scope="col" class="px-6 py-3">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -142,90 +140,6 @@
         </div>
     </div>
 
-    <!-- Form to Add Employee -->
-    <div class="w-full mt-2 p-4 shadow-lg rounded-md flex flex-col gap-4">
-        <h1 class="text-secondary_text font-semibold text-md">Add Employee</h1>
-        <form id="addEmployeeForm" action="" method="post" autocomplete="off">
-            <label for="EmployeeID">Employee ID</label>
-            <input type="text" name="EmployeeID" required autocomplete="off" class="mb-2 p-2 border rounded">
-            <label for="FirstName">First Name</label>
-            <input type="text" name="FirstName" required autocomplete="off" class="mb-2 p-2 border rounded">
-            <label for="LastName">Last Name</label>
-            <input type="text" name="LastName" required autocomplete="off" class="mb-2 p-2 border rounded">
-
-            <label for="PositionTitle">Position Title</label>
-                <select id="PositionTitle" name="PositionTitle" required class="mb-2 p-2 border rounded">
-                    <option value="" selected disabled>Select Position Title</option>
-                    <!-- Assuming you fetch position titles from the database and populate the dropdown dynamically -->
-                    <?php
-                    // Fetch position titles from the database
-                    $positionQuery = "SELECT PositionTitle FROM position";
-                    $positionResult = mysqli_query($conn, $positionQuery);
-
-                    // Check if there are any results
-                    if ($positionResult && mysqli_num_rows($positionResult) > 0) {
-                        // Loop through each row to display position titles as options in the dropdown
-                        while ($row = mysqli_fetch_assoc($positionResult)) {
-                            $PositionTitle = $row['PositionTitle'];
-                            echo "<option value='$PositionTitle'>$PositionTitle</option>";
-                        }
-                    }  
-                    ?>
-                </select>
-            <button name="submit" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded">Submit</button>
-        </form>
-    </div>
-
-    <?php
-if (isset($_POST['submit'])) {
-    $EmployeeID = $_POST['EmployeeID'];
-    $FirstName = $_POST['FirstName'];
-    $LastName = $_POST['LastName'];
-    $PositionTitle = $_POST['PositionTitle'];
-
-    // Check if the provided PositionTitle exists in the position table
-    $positionCheckQuery = "SELECT PositionID FROM position WHERE PositionTitle = '$PositionTitle'";
-    $positionCheckResult = mysqli_query($conn, $positionCheckQuery);
-
-    if (mysqli_num_rows($positionCheckResult) > 0) {
-        // PositionTitle exists, fetch the PositionID
-        $row = mysqli_fetch_assoc($positionCheckResult);
-        $PositionID = $row['PositionID'];
-
-        // Check if the FirstName and LastName already exist in the employee table
-        $nameCheckQuery = "SELECT EmployeeID FROM employee WHERE FirstName = '$FirstName' AND LastName = '$LastName'";
-        $nameCheckResult = mysqli_query($conn, $nameCheckQuery);
-
-        if (mysqli_num_rows($nameCheckResult) > 0) {
-            // Employee with the same FirstName and LastName already exists
-            echo "<script>alert('Error: An employee with the same First Name and Last Name already exists.');</script>";
-        } else {
-            // Check if the EmployeeID already exists
-            $employeeIDCheckQuery = "SELECT EmployeeID FROM employee WHERE EmployeeID = '$EmployeeID'";
-            $employeeIDCheckResult = mysqli_query($conn, $employeeIDCheckQuery);
-
-            if (mysqli_num_rows($employeeIDCheckResult) > 0) {
-                // EmployeeID already exists
-                echo "<script>alert('Error: An employee with the same EmployeeID already exists.');</script>";
-            } else {
-                // Insert the new employee with the correct PositionID
-                $setQuery = "INSERT INTO `employee` (`EmployeeID`, `FirstName`, `LastName`, `PositionID`) 
-                             VALUES ('$EmployeeID', '$FirstName', '$LastName', '$PositionID')";
-
-                if (mysqli_query($conn, $setQuery)) {
-                    echo "<script>alert('New record created successfully');</script>";
-                    echo "<meta http-equiv='refresh' content='0'>";
-                } else {
-                    echo "<script>alert('Error: " . $setQuery . "\\n" . mysqli_error($conn) . "');</script>";
-                }
-            }
-        }
-    } else {
-        // PositionTitle does not exist in the position table
-        echo "<script>alert('Error: The provided Position Title does not exist.');</script>";
-    }
-}
-?>
 
 
 </main>
@@ -375,10 +289,6 @@ if (isset($_POST['update'])) {
                 echo '<td class="px-6 py-4">' . $row['FirstName'] . '</td>';
                 echo '<td class="px-6 py-4">' . $row['LastName'] . '</td>';
                 echo '<td class="px-6 py-4">' . $row['PositionTitle'] . '</td>'; // Display PositionTitle instead of PositionID
-                echo '<td class="px-6 py-4 flex gap-2">';
-                echo '<button class="bg-green-400 hover:bg-green-500 text-black font-semibold py-1 px-2 rounded" onclick="openEditModal(\'' . $row['EmployeeID'] . '\', \'' . $row['FirstName'] . '\', \'' . $row['LastName'] . '\', \'' . $row['PositionID'] . '\')">Edit</button>';
-                echo '<button class="bg-red-400 hover:bg-red-500 text-white font-semibold py-1 px-2 rounded" onclick="deleteEmployee(\'' . $row['EmployeeID'] . '\')">Delete</button>';
-                echo '</td>';
                 echo '</tr>';
             }
         } else {

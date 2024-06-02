@@ -14,7 +14,7 @@
     <title>Employee Database Management</title>
 </head>
 <body class="bg-stone-50">
-<?php include('config/db.php'); ?>
+<?php include('../config/db.php'); ?>
 
 <header class="shadow-lg">
     <div class="flex items-center w-full px-6 py-2 justify-between">
@@ -146,7 +146,7 @@
         <div class="flex flex-col gap-3">
             <h5 class="text-xl text-center font-bold leading-none text-gray-900 dark:text-white pe-1">Your team's progress</h5>
             <?php
-                include('config/db.php');
+                include('../config/db.php');
 
                 // Fetch all projects
                 $projectQuery = "SELECT * FROM project";
@@ -289,7 +289,7 @@
 </div>
 <script type="text/javascript">
     <?php
-        include('config/db.php');
+        include('../config/db.php');
 
         // Fetch data from the database
         $query = "SELECT PositionTitle, Salary FROM position";

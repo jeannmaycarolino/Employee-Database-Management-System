@@ -12,7 +12,7 @@
     <title>Employee Database Management</title>
 </head>
 <body class="bg-stone-50">
-<?php include('config/db.php'); ?>
+<?php include('../config/db.php'); ?>
 
 <header class="shadow-lg">
     <div class="flex items-center w-full px-6 py-2 justify-between">
@@ -40,8 +40,8 @@
                 </div>
             </div>
         </div>
-          <div>
-        <a href="login.php" class="font-medium py-2 px-3 rounded-md hover:bg-red-400 hover:text-black">Sign out </a>
+        <div>
+        <a href="../login.php" class="font-medium py-2 px-3 rounded-md hover:bg-red-400 hover:text-black">Sign out </a>
         </div>
     </div>
 </header>
@@ -80,7 +80,7 @@
                             <th scope="col" class="px-6 py-3">Position ID</th>
                             <th scope="col" class="px-6 py-3">Position Title</th>
                             <th scope="col" class="px-6 py-3">Salary</th>
-                            <th scope="col" class="px-6 py-3">Action</th>
+                          
                         </tr>
                     </thead>
                     <tbody>
@@ -121,61 +121,6 @@
             </nav>
         </div>
     </div>
-
-    <!-- Form to Add Employee -->
-    <div class="w-full mt-2 p-4 shadow-lg rounded-md flex flex-col gap-4">
-        <h1 class="text-secondary_text font-semibold text-md">Add Position</h1>
-        <form id="addPositionForm" action="" method="post" autocomplete="off">
-            <label for="PositionID">Position ID</label>
-            <input type="text" name="PositionID" required autocomplete="off" class="mb-2 p-2 border rounded">
-            <label for="PositionTitle">Position Title</label>
-            <input type="text" name="PositionTitle" required autocomplete="off" class="mb-2 p-2 border rounded">
-            <label for="Salary">Salary</label>
-            <input type="text" name="Salary" required autocomplete="off" class="mb-2 p-2 border rounded">
-            <button name="submit" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded">Submit</button>
-        </form>
-    </div>
-
-<?php
-if (isset($_POST['submit'])) {
-    $PositionID = $_POST['PositionID'];
-    $PositionTitle = $_POST['PositionTitle'];
-    $Salary = $_POST['Salary'];
-
-    // Check if the Position ID already exists in the database
-    $checkPositionIDQuery = "SELECT * FROM `position` WHERE `PositionID` = '$PositionID'";
-    $checkPositionIDResult = mysqli_query($conn, $checkPositionIDQuery);
-
-    if ($checkPositionIDResult && mysqli_num_rows($checkPositionIDResult) > 0) {
-        echo "<script>alert('Error: Position ID already exists');</script>";
-    } else {
-        // Check if the Position Title already exists in the database
-        $checkPositionTitleQuery = "SELECT * FROM `position` WHERE `PositionTitle` = '$PositionTitle'";
-        $checkPositionTitleResult = mysqli_query($conn, $checkPositionTitleQuery);
-
-        if ($checkPositionTitleResult && mysqli_num_rows($checkPositionTitleResult) > 0) {
-            echo "<script>alert('Error: Position Title already exists');</script>";
-        } else {
-            // Check if Salary is not 0 and is a valid number
-            if ($Salary <= 0 || !is_numeric($Salary)) {
-                echo "<script>alert('Error: Salary should be a non-zero number');</script>";
-            } else {
-                // Insert new record into the position table
-                $setQuery = "INSERT INTO `position` (`PositionID`, `PositionTitle`, `Salary`) VALUES ('$PositionID', '$PositionTitle', '$Salary');";
-
-                if (mysqli_query($conn, $setQuery)) {
-                    echo "<script>alert('New record created successfully');</script>";
-                    echo "<meta http-equiv='refresh' content='0'>";
-                } else {
-                    echo "<script>alert('Error: " . $setQuery . "\\n" . mysqli_error($conn) . "');</script>";
-                }
-            }
-        }
-    }
-}
-?>
-
-
 
 
 </main>
@@ -299,10 +244,6 @@ function getTableData($position) {
             echo '<td class="px-6 py-4">' . $row['PositionID'] . '</td>';
             echo '<td class="px-6 py-4">' . $row['PositionTitle'] . '</td>';
             echo '<td class="px-6 py-4">' . $row['Salary'] . '</td>';
-            echo '<td class="px-6 py-4 flex gap-2">';
-            echo '<button class="bg-green-400 hover:bg-green-500 text-black font-semibold py-1 px-2 rounded" onclick="openEditModal(\'' . $row['PositionID'] . '\', \'' . $row['PositionTitle'] . '\', \'' . $row['Salary'] .'\')">Edit</button>';
-            echo '<button class="bg-red-400 hover:bg-red-500 text-white font-semibold py-1 px-2 rounded" onclick="deletePosition(\'' . $row['PositionID'] . '\')">Delete</button>';
-            echo '</td>';
             echo '</tr>';
         }
     } else {

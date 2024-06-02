@@ -12,7 +12,7 @@
     <title>Employee Database Management</title>
 </head>
 <body class="bg-stone-50">
-<?php include('config/db.php'); ?>
+<?php include('../config/db.php'); ?>
 
 <header class="shadow-lg">
     <div class="flex items-center w-full px-6 py-2 justify-between">
@@ -24,7 +24,6 @@
                 <ul id="navigation" class="flex flex-row gap-6 px-8 text-gray-400 font-medium max-sm:hidden max-sm:flex-col max-sm:px-4 max-sm:absolute max-sm:top-14 max-sm:bg-slate-800 max-sm:w-full max-sm:left-0 max-sm:gap-1 max-sm:pb-3 max-sm:rounded-b-lg">
                     <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="index.php"><li>Dashboard</li></a>
                     <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="employee.php"><li>Employee</li></a>
-                    <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="position.php"><li>Position</li></a>
                     <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="project.php"><li>Project</li></a>
                     <a class="py-2 px-3  bg-yellow-400 rounded-md text-black" href="assignment.php"><li>Assignment</li></a>
                 </ul>
@@ -41,7 +40,7 @@
             </div>
         </div>
         <div>
-        <a href="login.php" class="font-medium py-2 px-3 rounded-md hover:bg-red-400 hover:text-black">Sign out </a>
+        <a href="../login.php" class="font-medium py-2 px-3 rounded-md hover:bg-red-400 hover:text-black">Sign out </a>
         </div>
     </div>
 </header>
@@ -81,8 +80,7 @@
                             <th scope="col" class="px-6 py-3">First Name</th>
                             <th scope="col" class="px-6 py-3">Last Name</th>
                             <th scope="col" class="px-6 py-3">Project Name</th>
-                            <th scope="col" class="px-6 py-3">Hours Worked</th>
-                            <th scope="col" class="px-6 py-3">Action</th>
+                            <th scope="col" class="px-6 py-3">Hours Worked</th>   
                         </tr>
                     </thead>
                     <tbody>
@@ -143,79 +141,6 @@
                 </nav>
         </div>
     </div>
-
-    <!-- Form to Add Assignment -->
-    <div class="w-full mt-2 p-4 shadow-lg rounded-md flex flex-col gap-4">
-        <h1 class="text-secondary_text font-semibold text-md">Add Assignment</h1>
-        <form id="addAssignmentForm" action="" method="post" autocomplete="off">
-        <label for="AssignmentID">Assignment ID</label>
-        <input type="text" name="AssignmentID" required autocomplete="off" class="mb-2 p-2 border rounded">
-        <label for="FirstName">First Name</label>
-        <input type="text" name="FirstName" required autocomplete="off" class="mb-2 p-2 border rounded">
-        <label for="LastName">Last Name</label>
-        <input type="text" name="LastName" required autocomplete="off" class="mb-2 p-2 border rounded">
-        <label for="ProjectID">Project Name</label>
-        <select name="ProjectID" required class="mb-2 p-2 border rounded">
-            <!-- Populate project options dynamically from the database -->
-            <?php
-            $projectQuery = "SELECT * FROM project";
-            $projectResult = mysqli_query($conn, $projectQuery) or die('error');
-
-            while ($row = mysqli_fetch_array($projectResult)) {
-                echo '<option value="' . $row['ProjectID'] . '">' . $row['ProjectName'] . '</option>';
-            }
-            ?>
-        </select>
-        <label for="HoursWorked">Hours Worked</label>
-        <input type="number" name="HoursWorked" required autocomplete="off" class="mb-2 p-2 border rounded" min="1" max="8">
-
-        <button name="submit" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded">Submit</button>
-        </form>
-
-
-    </div>
-
-    <?php
-    if (isset($_POST['submit'])) {
-        $AssignmentID = $_POST['AssignmentID'];
-        $FirstName = $_POST['FirstName'];
-        $LastName = $_POST['LastName'];
-        $ProjectID = $_POST['ProjectID'];
-        $HoursWorked = $_POST['HoursWorked'];
-
-        // Check if AssignmentID already exists
-        $checkQuery = "SELECT * FROM `assignment` WHERE `AssignmentID`='$AssignmentID'";
-        $checkResult = mysqli_query($conn, $checkQuery);
-
-        if (mysqli_num_rows($checkResult) > 0) {
-            // Display script alert for duplicate AssignmentID
-            echo "<script>alert('Duplicate AssignmentID. Please choose a different AssignmentID.');</script>";
-        } else {
-            // Fetch EmployeeID based on First Name and Last Name
-            $employeeQuery = "SELECT EmployeeID FROM employee WHERE FirstName='$FirstName' AND LastName='$LastName'";
-            $employeeResult = mysqli_query($conn, $employeeQuery) or die('error');
-
-            if (mysqli_num_rows($employeeResult) > 0) {
-                $row = mysqli_fetch_assoc($employeeResult);
-                $EmployeeID = $row['EmployeeID'];
-
-                // Insert new record into the assignment table
-                $setQuery = "INSERT INTO `assignment` (`AssignmentID`, `EmployeeID`, `ProjectID`, `HoursWorked`) VALUES ('$AssignmentID', '$EmployeeID', '$ProjectID', '$HoursWorked');";
-
-                if (mysqli_query($conn, $setQuery)) {
-                    echo "<script>alert('New record created successfully');</script>";
-                    echo "<meta http-equiv='refresh' content='0'>";
-                } else {
-                    echo "Error: " . $setQuery . "<br>" . mysqli_error($conn);
-                }
-            } else {
-                // Display script alert if employee not found
-                echo "<script>alert('Employee not found. Please check first name and last name.');</script>";
-            }
-        }
-    }
-    ?>
-
 
 </main>
 
@@ -379,12 +304,7 @@ if (isset($_POST['update'])) {
                 echo '<td class="px-6 py-4">' . $row['FirstName'] . '</td>';
                 echo '<td class="px-6 py-4">' . $row['LastName'] . '</td>';
                 echo '<td class="px-6 py-4">' . $row['ProjectName'] . '</td>'; 
-                echo '<td class="px-6 py-4">' . $row['HoursWorked'] . '</td>';    
-
-                echo '<td class="px-6 py-4 flex gap-2">';
-                echo '<button class="bg-green-400 hover:bg-green-500 text-black font-semibold py-1 px-2 rounded" onclick="openEditModal(\'' . $row['AssignmentID'] . '\', \'' . $row['FirstName'] . '\', \'' . $row['LastName'] . '\', \'' . $row['ProjectName'] . '\',\'' . $row['HoursWorked'] . '\')">Edit</button>';
-                echo '<button class="bg-red-400 hover:bg-red-500 text-white font-semibold py-1 px-2 rounded" onclick="deleteAssignment(\'' . $row['AssignmentID'] . '\')">Delete</button>';
-                echo '</td>';
+                echo '<td class="px-6 py-4">' . $row['HoursWorked'] . '</td>';         
                 echo '</tr>';
             }
         } else {

@@ -12,7 +12,7 @@
     <title>Employee Database Management</title>
 </head>
 <body class="bg-stone-50">
-<?php include('config/db.php'); ?>
+<?php include('../config/db.php'); ?>
 
 <header class="shadow-lg">
     <div class="flex items-center w-full px-6 py-2 justify-between">
@@ -41,7 +41,7 @@
             </div>
         </div>
         <div>
-        <a href="login.php" class="font-medium py-2 px-3 rounded-md hover:bg-red-400 hover:text-black">Sign out </a>
+        <a href="../login.php" class="font-medium py-2 px-3 rounded-md hover:bg-red-400 hover:text-black">Sign out </a>
         </div>
     </div>
 </header>
@@ -81,8 +81,7 @@
                             <th scope="col" class="px-6 py-3">First Name</th>
                             <th scope="col" class="px-6 py-3">Last Name</th>
                             <th scope="col" class="px-6 py-3">Project Name</th>
-                            <th scope="col" class="px-6 py-3">Hours Worked</th>
-                            <th scope="col" class="px-6 py-3">Action</th>
+                            <th scope="col" class="px-6 py-3">Hours Worked</th>   
                         </tr>
                     </thead>
                     <tbody>
@@ -379,12 +378,7 @@ if (isset($_POST['update'])) {
                 echo '<td class="px-6 py-4">' . $row['FirstName'] . '</td>';
                 echo '<td class="px-6 py-4">' . $row['LastName'] . '</td>';
                 echo '<td class="px-6 py-4">' . $row['ProjectName'] . '</td>'; 
-                echo '<td class="px-6 py-4">' . $row['HoursWorked'] . '</td>';    
-
-                echo '<td class="px-6 py-4 flex gap-2">';
-                echo '<button class="bg-green-400 hover:bg-green-500 text-black font-semibold py-1 px-2 rounded" onclick="openEditModal(\'' . $row['AssignmentID'] . '\', \'' . $row['FirstName'] . '\', \'' . $row['LastName'] . '\', \'' . $row['ProjectName'] . '\',\'' . $row['HoursWorked'] . '\')">Edit</button>';
-                echo '<button class="bg-red-400 hover:bg-red-500 text-white font-semibold py-1 px-2 rounded" onclick="deleteAssignment(\'' . $row['AssignmentID'] . '\')">Delete</button>';
-                echo '</td>';
+                echo '<td class="px-6 py-4">' . $row['HoursWorked'] . '</td>';         
                 echo '</tr>';
             }
         } else {

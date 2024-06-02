@@ -14,7 +14,7 @@
     <title>Employee Database Management</title>
 </head>
 <body class="bg-stone-50">
-<?php include('config/db.php'); ?>
+<?php include('../config/db.php'); ?>
 
 <header class="shadow-lg">
     <div class="flex items-center w-full px-6 py-2 justify-between">
@@ -26,7 +26,6 @@
                 <ul id="navigation" class="flex flex-row gap-6 px-8 text-gray-400 font-medium max-sm:hidden max-sm:flex-col max-sm:px-4 max-sm:absolute max-sm:top-14 max-sm:bg-slate-800 max-sm:w-full max-sm:left-0 max-sm:gap-1 max-sm:pb-3 max-sm:rounded-b-lg">
                     <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="index.php"><li>Dashboard</li></a>
                     <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="employee.php"><li>Employee</li></a>
-                    <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="position.php"><li>Position</li></a>
                     <a class="py-2 px-3 bg-yellow-400 rounded-md text-black" href="project.php"><li>Project</li></a>
                     <a class="py-2 px-3 rounded-md hover:bg-slate-400 hover:text-black" href="assignment.php"><li>Assignment</li></a>
                 </ul>
@@ -43,7 +42,7 @@
             </div>
         </div>
         <div>
-        <a href="login.php" class="font-medium py-2 px-3 rounded-md hover:bg-red-400 hover:text-black">Sign out </a>
+        <a href="../login.php" class="font-medium py-2 px-3 rounded-md hover:bg-red-400 hover:text-black">Sign out </a>
         </div>
     </div>
 </header>
@@ -72,7 +71,7 @@
                 ?>
             </div>
 <?php
-include('config/db.php');
+include('../config/db.php');
 
 // Fetch all projects
 $projectQuery = "SELECT * FROM project";
@@ -219,7 +218,7 @@ $chartData = [
                             <th scope="col" class="px-6 py-3">Project Name</th>
                             <th scope="col" class="px-6 py-3">Start Date</th>
                             <th scope="col" class="px-6 py-3">End Date</th>
-                            <th scope="col" class="px-6 py-3">Action</th>
+                         
                         </tr>
                     </thead>
                     <tbody>
@@ -260,70 +259,6 @@ $chartData = [
             </nav>
         </div>
     </div>
-
-    <!-- Form to Add Employee -->
-    <div class="w-full mt-2 p-4 shadow-lg rounded-md flex flex-col gap-4">
-        <h1 class="text-secondary_text font-semibold text-md">Add Project</h1>
-        <form id="addProjectForm" action="" method="post" autocomplete="off">
-            <label for="ProjectID">Project ID</label>
-            <input type="text" name="ProjectID" required autocomplete="off" class="mb-2 p-2 border rounded">
-            <label for="ProjectName">Project Name</label>
-            <input type="text" name="ProjectName" required autocomplete="off" class="mb-2 p-2 border rounded">
-            <label for="StartDate">Start Date</label>
-            <input type="date" name="StartDate" required autocomplete="off" class="mb-2 p-2 border rounded">
-            <label for="EndDate">End Date</label>
-            <input type="date" name="EndDate" required autocomplete="off" class="mb-2 p-2 border rounded">
-
-            <button name="submit" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded">Submit</button>
-        </form>
-    </div>
-
-    <?php
-if (isset($_POST['submit'])) {
-    $ProjectID = $_POST['ProjectID'];
-    $ProjectName = $_POST['ProjectName'];
-    $StartDate = $_POST['StartDate'];
-    $EndDate = $_POST['EndDate'];
-
-    // Check if Start Date is after End Date
-    if ($StartDate > $EndDate) {
-        echo "<script>alert('Error: Start Date cannot be after End Date');</script>";
-    } else {
-        // Check if End Date is before Start Date
-        if ($EndDate < $StartDate) {
-            echo "<script>alert('Error: End Date cannot be before Start Date');</script>";
-        } else {
-            // Check if the Project ID already exists in the database
-            $checkProjectIDQuery = "SELECT * FROM `project` WHERE `ProjectID` = '$ProjectID'";
-            $checkProjectIDResult = mysqli_query($conn, $checkProjectIDQuery);
-
-            if ($checkProjectIDResult && mysqli_num_rows($checkProjectIDResult) > 0) {
-                echo "<script>alert('Error: Project ID already exists');</script>";
-            } else {
-                // Check if the Project Name already exists in the database
-                $checkProjectNameQuery = "SELECT * FROM `project` WHERE `ProjectName` = '$ProjectName'";
-                $checkProjectNameResult = mysqli_query($conn, $checkProjectNameQuery);
-
-                if ($checkProjectNameResult && mysqli_num_rows($checkProjectNameResult) > 0) {
-                    echo "<script>alert('Error: Project Name already exists');</script>";
-                } else {
-                    // Insert new record into the project table
-                    $setQuery = "INSERT INTO `project` (`ProjectID`, `ProjectName`, `StartDate`, `EndDate`) VALUES ('$ProjectID', '$ProjectName', '$StartDate', '$EndDate');";
-
-                    if (mysqli_query($conn, $setQuery)) {
-                        echo "<script>alert('New record created successfully');</script>";
-                        echo "<meta http-equiv='refresh' content='0'>";
-                    } else {
-                        echo "<script>alert('Error: " . $setQuery . "\\n" . mysqli_error($conn) . "');</script>";
-                    }
-                }
-            }
-        }
-    }
-}
-?>
-
-
 
 </main>
 
@@ -465,10 +400,6 @@ function getTableData($project) {
             echo '<td class="px-6 py-4">' . $row['ProjectName'] . '</td>';
             echo '<td class="px-6 py-4">' . $formattedStartDate . '</td>';
             echo '<td class="px-6 py-4">' . $formattedEndDate . '</td>';
-            echo '<td class="px-6 py-4 flex gap-2">';
-            echo '<button class="bg-green-400 hover:bg-green-500 text-black font-semibold py-1 px-2 rounded" onclick="openEditModal(\'' . $row['ProjectID'] . '\', \'' . $row['ProjectName'] . '\', \'' . $formattedStartDate .'\', \'' . $formattedEndDate .'\')">Edit</button>';
-            echo '<button class="bg-red-400 hover:bg-red-500 text-white font-semibold py-1 px-2 rounded" onclick="deleteProject(\'' . $row['ProjectID'] . '\')">Delete</button>';
-            echo '</td>';
             echo '</tr>';
         }
     } else {
